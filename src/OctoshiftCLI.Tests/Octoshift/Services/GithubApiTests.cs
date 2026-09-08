@@ -2886,7 +2886,8 @@ $",\"variables\":{{\"id\":\"{orgId}\",\"login\":\"{login}\"}}}}";
             exclude_git_data = true,
             exclude_releases = false,
             lock_repositories = false,
-            exclude_owner_projects = true
+            exclude_owner_projects = true,
+            exclude_attachments = false
         };
         const int expectedMigrationId = 1;
         var response = new { id = expectedMigrationId };
@@ -2913,7 +2914,8 @@ $",\"variables\":{{\"id\":\"{orgId}\",\"login\":\"{login}\"}}}}";
             exclude_git_data = true,
             exclude_releases = true,
             lock_repositories = false,
-            exclude_owner_projects = true
+            exclude_owner_projects = true,
+            exclude_attachments = false
         };
         var response = new { id = 1 };
 
@@ -2937,7 +2939,8 @@ $",\"variables\":{{\"id\":\"{orgId}\",\"login\":\"{login}\"}}}}";
             exclude_git_data = true,
             exclude_releases = true,
             lock_repositories = true,
-            exclude_owner_projects = true
+            exclude_owner_projects = true,
+            exclude_attachments = false
         };
         var response = new { id = 1 };
 
@@ -2945,6 +2948,31 @@ $",\"variables\":{{\"id\":\"{orgId}\",\"login\":\"{login}\"}}}}";
 
         // Act
         await _githubApi.StartMetadataArchiveGeneration(GITHUB_ORG, GITHUB_REPO, true, true);
+
+        // Assert
+        _githubClientMock.Verify(m => m.PostAsync(url, It.Is<object>(x => x.ToJson() == payload.ToJson()), null));
+    }
+
+    [Fact]
+    public async Task StartMetadataArchiveGeneration_Excludes_Attachments_When_Skip_Attachments_Is_True()
+    {
+        // Arrange
+        const string url = $"https://api.github.com/orgs/{GITHUB_ORG}/migrations";
+        var payload = new
+        {
+            repositories = new[] { GITHUB_REPO },
+            exclude_git_data = true,
+            exclude_releases = false,
+            lock_repositories = false,
+            exclude_owner_projects = true,
+            exclude_attachments = true
+        };
+        var response = new { id = 1 };
+
+        _githubClientMock.Setup(m => m.PostAsync(url, It.IsAny<object>(), null)).ReturnsAsync(response.ToJson());
+
+        // Act
+        await _githubApi.StartMetadataArchiveGeneration(GITHUB_ORG, GITHUB_REPO, false, false, true);
 
         // Assert
         _githubClientMock.Verify(m => m.PostAsync(url, It.Is<object>(x => x.ToJson() == payload.ToJson()), null));

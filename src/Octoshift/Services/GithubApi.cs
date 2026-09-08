@@ -768,7 +768,7 @@ public class GithubApi
         }
     }
 
-    public virtual async Task<int> StartMetadataArchiveGeneration(string org, string repo, bool skipReleases, bool lockSource)
+    public virtual async Task<int> StartMetadataArchiveGeneration(string org, string repo, bool skipReleases, bool lockSource, bool skipAttachments = false)
     {
         var url = $"{_apiUrl}/orgs/{org.EscapeDataString()}/migrations";
 
@@ -778,7 +778,8 @@ public class GithubApi
             exclude_git_data = true,
             exclude_releases = skipReleases,
             lock_repositories = lockSource,
-            exclude_owner_projects = true
+            exclude_owner_projects = true,
+            exclude_attachments = skipAttachments
         };
 
         var response = await _client.PostAsync(url, options);

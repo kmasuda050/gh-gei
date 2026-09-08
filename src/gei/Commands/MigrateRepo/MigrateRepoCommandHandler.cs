@@ -116,6 +116,7 @@ public class MigrateRepoCommandHandler : ICommandHandler<MigrateRepoCommandArgs>
               args.AwsBucketName,
               args.SkipReleases,
               args.LockSourceRepo,
+              args.SkipAttachments,
               blobCredentialsRequired,
               args.KeepArchive,
               args.UseGithubStorage
@@ -227,12 +228,13 @@ public class MigrateRepoCommandHandler : ICommandHandler<MigrateRepoCommandArgs>
       string awsBucketName,
       bool skipReleases,
       bool lockSourceRepo,
+      bool skipAttachments,
       bool blobCredentialsRequired,
       bool keepArchive,
       bool useGithubStorage)
     {
         var (gitArchiveUrl, metadataArchiveUrl, gitArchiveId, metadataArchiveId) = await _retryPolicy.Retry(
-            async () => await GenerateArchives(githubSourceOrg, sourceRepo, skipReleases, lockSourceRepo));
+            async () => await GenerateArchives(githubSourceOrg, sourceRepo, skipReleases, lockSourceRepo, skipAttachments));
 
         if (!useGithubStorage && !blobCredentialsRequired)
         {
@@ -328,11 +330,12 @@ public class MigrateRepoCommandHandler : ICommandHandler<MigrateRepoCommandArgs>
         string githubSourceOrg,
         string sourceRepo,
         bool skipReleases,
-        bool lockSourceRepo)
+        bool lockSourceRepo,
+        bool skipAttachments = false)
     {
         var gitArchiveId = await _sourceGithubApi.StartGitArchiveGeneration(githubSourceOrg, sourceRepo);
         _log.LogInformation($"Archive generation of git data started with id: {gitArchiveId}");
-        var metadataArchiveId = await _sourceGithubApi.StartMetadataArchiveGeneration(githubSourceOrg, sourceRepo, skipReleases, lockSourceRepo);
+        var metadataArchiveId = await _sourceGithubApi.StartMetadataArchiveGeneration(githubSourceOrg, sourceRepo, skipReleases, lockSourceRepo, skipAttachments);
         _log.LogInformation($"Archive generation of metadata started with id: {metadataArchiveId}");
 
         var gitArchiveUrl = await WaitForArchiveGeneration(_sourceGithubApi, githubSourceOrg, gitArchiveId);

@@ -30,6 +30,7 @@ namespace OctoshiftCLI.GithubEnterpriseImporter.Commands.MigrateRepo
         public string GitArchivePath { get; set; }
         public string MetadataArchivePath { get; set; }
         public bool SkipReleases { get; set; }
+        public bool SkipAttachments { get; set; }
         public bool LockSourceRepo { get; set; }
         public bool QueueOnly { get; set; }
         public string TargetRepoVisibility { get; set; }

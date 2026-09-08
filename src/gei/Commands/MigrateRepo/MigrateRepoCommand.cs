@@ -36,6 +36,7 @@ namespace OctoshiftCLI.GithubEnterpriseImporter.Commands.MigrateRepo
             AddOption(GitArchivePath);
             AddOption(MetadataArchivePath);
             AddOption(SkipReleases);
+            AddOption(SkipAttachments);
             AddOption(LockSourceRepo);
             AddOption(QueueOnly);
             AddOption(TargetRepoVisibility.FromAmong("public", "private", "internal"));
@@ -140,6 +141,10 @@ namespace OctoshiftCLI.GithubEnterpriseImporter.Commands.MigrateRepo
         public Option<bool> SkipReleases { get; } = new("--skip-releases")
         {
             Description = "Skip releases when migrating."
+        };
+        public Option<bool> SkipAttachments { get; } = new("--skip-attachments")
+        {
+            Description = "Only effective if migrating from GHES. Skips attachments (e.g. images uploaded to issues/PRs) in the metadata archive, reducing its size."
         };
         public Option<bool> LockSourceRepo { get; } = new("--lock-source-repo")
         {
