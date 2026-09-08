@@ -48,7 +48,7 @@ public class VersionChecker : IVersionProvider
                 _httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(comments));
             }
 
-            const string url = "https://raw.githubusercontent.com/github/gh-gei/main/LATEST-VERSION.txt";
+            const string url = "https://raw.githubusercontent.com/kmasuda050/gh-gei/main/LATEST-VERSION.txt";
 
             _log.LogVerbose($"HTTP GET: {url}");
             var response = await _httpClient.GetAsync(url);
